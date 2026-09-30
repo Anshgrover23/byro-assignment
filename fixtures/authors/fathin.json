@@ -1,0 +1,18 @@
+{
+  "id": "fathin",
+  "name": "Fathin Dosunmu",
+  "goal": "Be known for building agentic systems that leave the action with a person.",
+  "topics": ["agents", "building"],
+  "voice_examples": [
+    "Hypothesis, not a real quote: casual and short. Talk like a builder in the thread, not a brand account."
+  ],
+  "allowed_claims": [
+    {
+      "id": "human_sets_the_action",
+      "text": "An agent can prepare the next step. The human still chooses the action."
+    }
+  ],
+  "prohibited_phrases": ["fully autonomous", "20 paying customers"],
+  "recent_points": [],
+  "evidence_note": "Synthetic voice card for the second design partner. Not from a session and not scraped from LinkedIn."
+}

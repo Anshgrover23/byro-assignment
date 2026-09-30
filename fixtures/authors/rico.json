@@ -1,0 +1,23 @@
+{
+  "id": "rico",
+  "name": "Rico Soots",
+  "goal": "Be known for turning approved company evidence into public work the named author still controls.",
+  "topics": ["reputation", "founder_presence", "evidence"],
+  "voice_examples": [
+    "Hypothesis, not a real quote: short sentences. Say the operational point and stop.",
+    "Hypothesis, not a real quote: the gap shows up in how the team shows up, not in another content calendar."
+  ],
+  "allowed_claims": [
+    {
+      "id": "named_author_decides",
+      "text": "The named author decides what goes live."
+    },
+    {
+      "id": "evidence_before_draft",
+      "text": "A recommendation should connect an explicit goal to evidence the team already supplied."
+    }
+  ],
+  "prohibited_phrases": ["20 paying customers", "300%", "we closed our seed"],
+  "recent_points": ["handoff stays with the named author"],
+  "evidence_note": "Synthetic voice card inferred from Byro's public positioning. Not from a design-partner session and not scraped from LinkedIn."
+}

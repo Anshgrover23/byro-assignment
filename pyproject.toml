@@ -1,0 +1,24 @@
+[project]
+name = "engage"
+version = "0.1.0"
+description = "Decide whether to comment, draft one evidence-bound reply, and learn from a reviewed edit."
+readme = "README.md"
+requires-python = ">=3.11"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+live = ["google-genai>=1.0.0"]
+
+[project.scripts]
+engage = "engage.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]

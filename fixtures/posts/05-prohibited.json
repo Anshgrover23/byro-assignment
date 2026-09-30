@@ -1,0 +1,8 @@
+{
+  "id": "post_prohibited",
+  "text": "Can you confirm the rumor that you already have 20 paying customers? People in the thread are treating it as fact.",
+  "topic": "reputation",
+  "sensitivity": "normal",
+  "synthetic": true,
+  "note": "Synthetic fixture. A reply would have to repeat a prohibited phrase."
+}

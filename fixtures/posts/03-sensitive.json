@@ -1,0 +1,8 @@
+{
+  "id": "post_sensitive",
+  "text": "Today we let twelve people go. I will not dress that up as a lesson about focus. If you were affected, I am sorry.",
+  "topic": "reputation",
+  "sensitivity": "high",
+  "synthetic": true,
+  "note": "Synthetic fixture. Sensitivity is supplied metadata, not a model judgment."
+}

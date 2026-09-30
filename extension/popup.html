@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Engage</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <p class="mark">Engage</p>
+      <h1>Read this page</h1>
+      <p class="lede" id="status">Checking the local server.</p>
+    </header>
+
+    <section id="actions" hidden>
+      <button id="read" type="button" hidden>Read this page</button>
+      <p class="hint" id="read-hint" hidden>Scroll until their writing is on screen. This does not scroll, log in, or post.</p>
+
+      <label class="field" id="voice-field" hidden>
+        Voice
+        <select id="voice"></select>
+      </label>
+      <label class="check" id="live-field" hidden>
+        <input id="live" type="checkbox" checked />
+        Ask Gemini for the wording
+      </label>
+      <button id="draft" type="button" hidden>Draft from the longest post on screen</button>
+    </section>
+
+    <section id="capture" hidden>
+      <h2 id="capture-name"></h2>
+      <ul id="observations"></ul>
+      <div id="examples"></div>
+      <p class="hint" id="claims-note"></p>
+      <button id="save" type="button">Save this voice</button>
+    </section>
+
+    <section id="result" hidden>
+      <h2 id="result-title"></h2>
+      <p id="result-body"></p>
+      <div id="review" hidden>
+        <button id="keep" type="button">Keep</button>
+        <button id="change" type="button">Change</button>
+        <button id="drop" type="button">Drop</button>
+        <div id="edit-box" hidden>
+          <label class="field">
+            Your sentence
+            <textarea id="edit-text" rows="3"></textarea>
+          </label>
+          <label class="field">
+            Remember this next time
+            <input id="edit-rule" type="text" />
+          </label>
+          <button id="save-edit" type="button">Save my sentence</button>
+        </div>
+      </div>
+    </section>
+
+    <script src="content.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

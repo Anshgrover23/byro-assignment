@@ -1,0 +1,8 @@
+{
+  "id": "post_agents",
+  "text": "Most agent demos still end with the model taking the action itself. The interesting part is the step where a person can stop it.",
+  "topic": "agents",
+  "sensitivity": "normal",
+  "synthetic": true,
+  "note": "Synthetic fixture for Fathin's goal. Not a real LinkedIn post."
+}
