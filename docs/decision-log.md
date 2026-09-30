@@ -17,7 +17,8 @@ Running total about 2.5 hours before Fathin's later instruction. The extension, 
 - Learning that a person can inspect is a text rule, not a weight update. Only the "do not end with a question" pattern is enforced in code. Other rule text is added to the next prompt and may be ignored by a live model.
 - The named person may override a skip by editing in their own sentence. They may not accept a blocked or skipped model draft unchanged.
 - Voice match cannot be proven from the shipped fixtures. They stay labeled as hypotheses until a person confirms a capture.
-- Fathin's later message authorizes reading the two profiles and names GitHub as the place to submit. "Scraping" here means a click that reads the DOM of a LinkedIn tab the person already opened. It does not mean an unattended crawler, a login bot, or a cookie export.
+- Fathin's later message authorizes reading the two profiles and names GitHub as the place to submit. "Scraping" here means reading the DOM of a LinkedIn tab the person already opened. It does not mean an unattended crawler, a login bot, or a cookie export.
+- A profile the person opens can refresh a markdown voice memory. A single post cannot. The comment is written into the open box, and the person presses Post.
 
 ## Alternatives
 

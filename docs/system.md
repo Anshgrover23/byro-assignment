@@ -38,6 +38,12 @@ flowchart TD
 5. Draft from the longest post on screen writes `data/inbox/open_post.json` and runs the same gate, prompt, and checker as a fixture. The topic is that author's first topic, because the person chose the post. Sensitivity, injection, prohibited phrases, and repeated points still skip with no model call.
 6. Keep, change, and drop call `POST /review`, which is the same decision record as the CLI. Accept and edit can produce `ready_to_paste`. The extension does not submit the comment to LinkedIn.
 
+## Voice memory
+
+Opening a profile (`/in/…` or that profile's recent activity) reads the posts already on screen and writes `data/voices/{id}.md`. The file has how they talk, a system prompt, and the posts. A later visit appends posts that were not there. Gemini writes the tone when a key is present. Without a key, the tone is the measured length and question habit. That text is style. It is added to the next draft prompt for that author only.
+
+A single post URL is not a profile. It does not create a voice. Draft fills the open comment box and does not press Enter or the Post button.
+
 ## Primary flow
 
 `engage propose --author rico --post fixtures/posts/01-on-goal.json`

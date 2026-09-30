@@ -6,6 +6,7 @@ from pathlib import Path
 from urllib import request
 from urllib.error import HTTPError
 
+from engage.harness import update_memory
 from engage.server import _capture, _draft, _handler_factory, _review, _save
 from engage.store import load_author
 
@@ -54,6 +55,12 @@ def test_capture_rejects_a_page_that_is_not_linkedin(tmp_path):
 def test_open_post_still_skips_sensitive_and_injection(tmp_path):
     fixtures = _fixtures(tmp_path)
     data = tmp_path / "data"
+    update_memory(
+        data,
+        name="Rico Soots",
+        profile_url="https://www.linkedin.com/in/ricosoots/recent-activity/all/",
+        texts=["Byro is now five people, and the named author still decides what goes live."],
+    )
     sensitive = _draft(
         data,
         fixtures,
@@ -84,6 +91,12 @@ def test_open_post_still_skips_sensitive_and_injection(tmp_path):
 def test_accept_of_a_skip_is_refused(tmp_path):
     fixtures = _fixtures(tmp_path)
     data = tmp_path / "data"
+    update_memory(
+        data,
+        name="Rico Soots",
+        profile_url="https://www.linkedin.com/in/ricosoots/recent-activity/all/",
+        texts=["Byro is now five people, and the named author still decides what goes live."],
+    )
     proposal = _draft(
         data,
         fixtures,

@@ -50,6 +50,16 @@ def test_new_person_starts_with_no_claims():
     assert card.topics == ["general"]
 
 
+def test_a_short_real_post_is_kept():
+    summary = summarize(
+        "Rico Soots",
+        "https://www.linkedin.com/in/ricosoots/recent-activity/all/",
+        ["Byro is now five people.", "looking for six and seven."],
+    )
+    assert summary["id"] == "rico"
+    assert "Byro is now five people." in summary["voice_examples"]
+
+
 def test_empty_capture_is_refused():
     with pytest.raises(ValueError, match="no writing"):
         summarize("Rico", "https://www.linkedin.com/in/ricosoots/", ["hi", "   "])

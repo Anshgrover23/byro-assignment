@@ -8,12 +8,14 @@ const SKIP = {
   repeats_point: "This repeats a point they already made. Say nothing.",
 };
 
-let pendingCard = null;
 let pendingProposal = null;
+let pageKindNow = "other";
 
 document.addEventListener("DOMContentLoaded", init);
+document.getElementById("nav-start").addEventListener("click", () => showStart());
+document.getElementById("nav-settings").addEventListener("click", () => showSettings());
+document.getElementById("go-comment").addEventListener("click", () => showComment());
 document.getElementById("read").addEventListener("click", onRead);
-document.getElementById("save").addEventListener("click", onSave);
 document.getElementById("draft").addEventListener("click", onDraft);
 document.getElementById("keep").addEventListener("click", () => review("accept"));
 document.getElementById("change").addEventListener("click", showEdit);
@@ -27,17 +29,80 @@ async function init() {
     return;
   }
   const tab = await currentTab();
-  const url = tab && tab.url ? tab.url : "";
+  const url = await pageHref(tab);
   if (!url.includes("linkedin.com")) {
     setStatus("Open a LinkedIn profile or a post, then click Engage again.");
     return;
   }
+  pageKindNow = pageKind(url);
+  document.getElementById("go-comment").hidden = pageKindNow !== "post";
+  showStart(pageKindNow);
+}
+
+function showStart(kind) {
+  const current = kind || pageKindNow;
+  document.getElementById("title").textContent = "Start";
+  document.getElementById("start").hidden = false;
+  document.getElementById("settings").hidden = true;
+  document.getElementById("actions").hidden = true;
+  document.getElementById("capture").hidden = true;
+  document.getElementById("result").hidden = true;
+  document.getElementById("nav-start").setAttribute("aria-current", "page");
+  document.getElementById("nav-settings").removeAttribute("aria-current");
+  if (current === "profile") {
+    setStatus("You are on a profile. Open Activity and scroll. The panel on the page saves each post.");
+  } else if (current === "post") {
+    setStatus("A post is open. Build a voice first, or write a comment if one is already saved.");
+  } else {
+    setStatus("Open a LinkedIn profile to begin.");
+  }
+}
+
+async function showSettings() {
+  document.getElementById("title").textContent = "Settings";
+  document.getElementById("start").hidden = true;
+  document.getElementById("settings").hidden = false;
+  document.getElementById("actions").hidden = true;
+  document.getElementById("capture").hidden = true;
+  document.getElementById("result").hidden = true;
+  document.getElementById("nav-settings").setAttribute("aria-current", "page");
+  document.getElementById("nav-start").removeAttribute("aria-current");
+  setStatus("Voices recorded on this machine.");
+  const list = document.getElementById("memory-list");
+  const payload = await getJson("/memories");
+  const memories = payload && payload.memories ? payload.memories : [];
+  list.replaceChildren();
+  if (!memories.length) {
+    const empty = document.createElement("p");
+    empty.textContent = "No voices recorded yet. Start on a profile.";
+    list.appendChild(empty);
+    return;
+  }
+  for (const memory of memories) {
+    const article = document.createElement("article");
+    const name = document.createElement("h2");
+    name.textContent = memory.name;
+    const line = document.createElement("p");
+    line.textContent = memory.one_liner || memory.posts + " posts";
+    const meta = document.createElement("p");
+    meta.className = "hint";
+    meta.textContent = memory.posts + " posts";
+    article.append(name, line, meta);
+    list.appendChild(article);
+  }
+}
+
+async function showComment() {
+  document.getElementById("title").textContent = "Comment in their voice";
+  document.getElementById("start").hidden = true;
+  document.getElementById("settings").hidden = true;
   document.getElementById("actions").hidden = false;
-  const onProfile = /linkedin\.com\/in\//i.test(url);
-  document.getElementById("read").hidden = !onProfile;
-  document.getElementById("read-hint").hidden = !onProfile;
-  setStatus(onProfile ? "Read the posts that are visible, then save only if the card looks right." : "Pick a saved voice and draft from the longest post on screen.");
-  await loadVoices();
+  document.getElementById("nav-start").removeAttribute("aria-current");
+  document.getElementById("nav-settings").removeAttribute("aria-current");
+  setStatus("Pick a voice. The draft goes in the comment box. You press Post.");
+  const tab = await currentTab();
+  const url = await pageHref(tab);
+  await loadVoices(pageKind(url));
 }
 
 async function onRead() {
@@ -45,36 +110,19 @@ async function onRead() {
   try {
     const page = await readTab();
     if (!page || !page.texts || page.texts.length === 0) {
-      setStatus("No posts were visible. Scroll until their writing is on screen, then read again.");
+      setStatus("No post text was on screen. Scroll until the writing is visible, then try again.");
       return;
     }
-    const result = await postJson("/capture", page);
+    const result = await postJson("/harness", page);
     if (!result || result.error) {
       setStatus(result && result.error ? result.error : "The server refused this page.");
       return;
     }
-    pendingCard = result.card;
-    renderCapture(result);
-    setStatus("Nothing is saved yet.");
+    renderMemory(result);
+    setStatus(result.unchanged ? "Voice for " + result.name + " is already up to date." : "Voice memory updated for " + result.name + ".");
+    await loadVoices(pageKind((await currentTab()).url || ""));
   } catch (err) {
     setStatus("Could not read this tab. Stay on LinkedIn and try again.");
-  } finally {
-    setBusy(false);
-  }
-}
-
-async function onSave() {
-  if (!pendingCard) return;
-  setBusy(true);
-  try {
-    const result = await postJson("/voices/save", { card: pendingCard });
-    if (!result || result.error) {
-      setStatus(result && result.error ? result.error : "Could not save this voice.");
-      return;
-    }
-    setStatus("Saved for " + result.name + ". Open a post and draft as them.");
-    document.getElementById("capture").hidden = true;
-    await loadVoices();
   } finally {
     setBusy(false);
   }
@@ -105,6 +153,14 @@ async function onDraft() {
     }
     pendingProposal = proposal;
     renderProposal(proposal);
+    if (proposal.status === "draft" && proposal.comment) {
+      const placed = await placeInBox(proposal.comment);
+      if (placed && placed.filled) {
+        setStatus("In the comment box. You press Post. Enter was not pressed.");
+      } else {
+        setStatus("Click Comment to open the box, then draft again. Enter was not pressed.");
+      }
+    }
   } catch (err) {
     setStatus("Could not read this tab. Stay on LinkedIn and try again.");
   } finally {
@@ -150,27 +206,25 @@ function showEdit() {
   }
 }
 
-function renderCapture(result) {
-  const card = result.card;
+function renderMemory(result) {
   document.getElementById("capture").hidden = false;
-  document.getElementById("capture-name").textContent = card.name;
+  document.getElementById("capture-name").textContent = result.name;
   const list = document.getElementById("observations");
   list.replaceChildren();
-  for (const item of result.summary.observations) {
+  for (const item of [result.posts + " posts in memory", result.added + " new this time"]) {
     const li = document.createElement("li");
     li.textContent = item;
     list.appendChild(li);
   }
   const examples = document.getElementById("examples");
   examples.replaceChildren();
-  for (const example of result.summary.voice_examples) {
+  if (result.how) {
     const p = document.createElement("p");
-    p.textContent = example;
+    p.textContent = result.how;
     examples.appendChild(p);
   }
-  const claims = card.allowed_claims || [];
-  document.getElementById("claims-note").textContent = claims.length
-    ? "Allowed claims stay as they already are. This page does not add new ones."
+  document.getElementById("memory-note").textContent = result.claims
+    ? "Allowed claims stay as they already are. The memory is style only."
     : "This voice has no allowed claims yet. A model draft will be refused until you add one.";
 }
 
@@ -201,9 +255,9 @@ function renderProposal(proposal) {
   setStatus("Keep it, change it, or drop it. Nothing is posted.");
 }
 
-async function loadVoices() {
-  const payload = await getJson("/voices");
-  const voices = payload && payload.voices ? payload.voices : [];
+async function loadVoices(kind) {
+  const payload = await getJson("/memories");
+  const voices = payload && payload.memories ? payload.memories : [];
   const select = document.getElementById("voice");
   select.replaceChildren();
   for (const voice of voices) {
@@ -212,20 +266,36 @@ async function loadVoices() {
     option.textContent = voice.name;
     select.appendChild(option);
   }
-  const ready = voices.length > 0;
+  const ready = voices.length > 0 && kind === "post";
   document.getElementById("voice-field").hidden = !ready;
   document.getElementById("live-field").hidden = !ready;
   document.getElementById("draft").hidden = !ready;
 }
 
+async function placeInBox(text) {
+  const tab = await currentTab();
+  if (!tab || !tab.id) return { filled: false };
+  return chrome.tabs.sendMessage(tab.id, { type: "fill", text });
+}
+
+async function pageHref(tab) {
+  if (!tab || !tab.id) return "";
+  try {
+    const [injected] = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => location.href,
+    });
+    if (injected && typeof injected.result === "string" && injected.result) return injected.result;
+  } catch (err) {
+    return tab.url || "";
+  }
+  return tab.url || "";
+}
+
 async function readTab() {
   const tab = await currentTab();
   if (!tab || !tab.id) throw new Error("no tab");
-  const [injected] = await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: readLinkedInPage,
-  });
-  return injected ? injected.result : null;
+  return chrome.tabs.sendMessage(tab.id, { type: "read" });
 }
 
 async function currentTab() {

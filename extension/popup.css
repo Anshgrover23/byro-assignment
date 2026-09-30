@@ -23,6 +23,36 @@ header {
   color: #6d6458;
 }
 
+nav {
+  display: flex;
+  gap: 12px;
+  margin: 6px 0 10px;
+}
+
+nav button {
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6d6458;
+}
+
+nav button[aria-current="page"] {
+  color: #1c1915;
+}
+
+ol {
+  margin: 0 0 12px;
+  padding-left: 18px;
+}
+
+#memory-list article {
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e4dccf;
+}
+
 h1, h2 {
   margin: 2px 0 6px;
   font-weight: 600;
@@ -39,6 +69,10 @@ h2 {
 
 .hint, .lede {
   color: #4e463c;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 button, select, textarea, input[type="text"] {

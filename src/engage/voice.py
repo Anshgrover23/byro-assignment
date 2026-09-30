@@ -46,6 +46,7 @@ def summarize(name: str, profile_url: str, texts: list[str]) -> dict:
         "id": author_id_for(profile_url, name),
         "name": name.strip() or "Unknown",
         "profile_url": profile_url,
+        "samples": samples,
         "voice_examples": examples,
         "observations": observations,
         "median_words": median,
@@ -94,7 +95,7 @@ def _clean_samples(texts: list[str]) -> list[str]:
     samples = []
     for raw in texts:
         text = " ".join(raw.split())
-        if len(text) < 40:
+        if len(text) < 12:
             continue
         key = text.lower()
         if key in seen:

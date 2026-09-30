@@ -39,10 +39,12 @@ def check_draft(
 
     allowed = {claim.id: claim.text for claim in author.allowed_claims}
     if not claim_ids:
-        return CheckResult(False, "ungrounded")
-    for claim_id in claim_ids:
-        if claim_id not in allowed:
-            return CheckResult(False, "unknown_claim")
+        if author.allowed_claims:
+            return CheckResult(False, "ungrounded")
+    else:
+        for claim_id in claim_ids:
+            if claim_id not in allowed:
+                return CheckResult(False, "unknown_claim")
 
     lowered = comment.lower()
     for phrase in author.prohibited_phrases:

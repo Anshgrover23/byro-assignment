@@ -35,14 +35,16 @@ That listens on `http://127.0.0.1:8787` and does not open LinkedIn.
 
 In Chrome, open `chrome://extensions`, turn on Developer mode, choose Load unpacked, and select the `extension/` folder.
 
-Log into LinkedIn yourself. Open one of these, scroll until posts are on screen, then click the Engage icon and Read visible posts:
+Log into LinkedIn yourself. Open a profile, for example:
 
 - https://www.linkedin.com/in/fathindos/
 - https://www.linkedin.com/in/ricosoots/
 
-Save this voice only if the samples are theirs. Then open a post, pick that voice, and draft. Keep, change, or drop the sentence. Paste it yourself.
+A note on the page counts how many posts are saved. Scroll the profile yourself. LinkedIn loads older posts as you go, and each new one is added to the memory. Engage does not scroll, open posts, or walk the profile. The file is `data/voices/rico.md` or `data/voices/fathin.md`. It is style only. Allowed claims are not taken from the page.
 
-The extension reads text already visible in the tab you clicked. It does not store cookies, scroll, walk a profile, or post. If the page layout hides the writing, it reports that no posts were visible.
+Then open someone else's post. Click Comment so the box is open. In Engage, pick Rico or Fathin and choose Draft a comment in this voice. The sentence is placed in the box. You press Post. Enter is not pressed.
+
+The extension reads the profile you opened and the post on screen. It does not store cookies, scroll the profile for you, or post. After a code change, reload the extension at chrome://extensions and refresh the LinkedIn tab. Restart `engage serve` too.
 
 A live draft needs Gemini:
 

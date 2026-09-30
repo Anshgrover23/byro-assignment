@@ -8,13 +8,30 @@
   <body>
     <header>
       <p class="mark">Engage</p>
-      <h1>Read this page</h1>
+      <nav>
+        <button id="nav-start" type="button">Start</button>
+        <button id="nav-settings" type="button">Settings</button>
+      </nav>
+      <h1 id="title">Start</h1>
       <p class="lede" id="status">Checking the local server.</p>
     </header>
 
+    <section id="start">
+      <ol>
+        <li>Open the person's LinkedIn profile.</li>
+        <li>Open Activity and scroll. The panel on the page saves each post.</li>
+        <li>Open one post. Then write a comment.</li>
+      </ol>
+      <button id="go-comment" type="button" hidden>Write a comment on this post</button>
+    </section>
+
+    <section id="settings" hidden>
+      <div id="memory-list"></div>
+    </section>
+
     <section id="actions" hidden>
-      <button id="read" type="button" hidden>Read this page</button>
-      <p class="hint" id="read-hint" hidden>Scroll until their writing is on screen. This does not scroll, log in, or post.</p>
+      <button id="read" type="button" hidden>Update voice from the posts on screen</button>
+      <p class="hint" id="read-hint" hidden>Scroll the profile yourself. Older posts load as you go. Nothing is posted.</p>
 
       <label class="field" id="voice-field" hidden>
         Voice
@@ -24,15 +41,14 @@
         <input id="live" type="checkbox" checked />
         Ask Gemini for the wording
       </label>
-      <button id="draft" type="button" hidden>Draft from the longest post on screen</button>
+      <button id="draft" type="button" hidden>Draft a comment in this voice</button>
     </section>
 
     <section id="capture" hidden>
       <h2 id="capture-name"></h2>
       <ul id="observations"></ul>
       <div id="examples"></div>
-      <p class="hint" id="claims-note"></p>
-      <button id="save" type="button">Save this voice</button>
+      <p class="hint" id="memory-note"></p>
     </section>
 
     <section id="result" hidden>

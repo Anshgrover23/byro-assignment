@@ -2,11 +2,18 @@
   "manifest_version": 3,
   "name": "Engage",
   "version": "0.1.0",
-  "description": "Read the LinkedIn page you already have open. Draft one comment. Never posts.",
+  "description": "Build a voice memory from a profile you open. Draft one comment. Never posts.",
   "permissions": ["activeTab", "scripting"],
-  "host_permissions": ["http://127.0.0.1:8787/*"],
+  "host_permissions": ["https://www.linkedin.com/*", "http://127.0.0.1:8787/*"],
   "action": {
     "default_popup": "popup.html",
     "default_title": "Engage"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
 }

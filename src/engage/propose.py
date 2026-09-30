@@ -11,7 +11,7 @@ from engage.model import ModelAdapter
 from engage.models import EngageError, Proposal
 from engage.prompt import build_prompt
 from engage.rules import load_rules
-from engage.store import list_records, load_author, load_post, save_record
+from engage.store import list_records, load_post, save_record
 
 
 def propose(
@@ -22,8 +22,16 @@ def propose(
     fixtures_dir: Path,
     model: ModelAdapter | None = None,
     live: bool = False,
+    from_memory: bool = False,
 ) -> Proposal:
-    author = load_author(fixtures_dir, author_id)
+    from engage.harness import author_from_memory, memory_for_prompt, resolve_author
+
+    if from_memory:
+        author = author_from_memory(data_dir, author_id)
+        if author is None:
+            raise EngageError("No recorded voice yet. Open their profile, then Activity, and scroll.")
+    else:
+        author = resolve_author(data_dir, fixtures_dir, author_id)
     post = load_post(post_path)
     rules = load_rules(data_dir, author.id)
     gate = evaluate(post, author)
@@ -44,7 +52,7 @@ def propose(
         return proposal
 
     drafter = _resolve_model(model, live)
-    prompt = build_prompt(author, post, rules)
+    prompt = build_prompt(author, post, rules, memory_for_prompt(data_dir, author.id))
     raw = drafter.draft(prompt)
     parsed = parse_model_output(raw)
 
@@ -64,6 +72,8 @@ def propose(
         return proposal
 
     comment, claim_ids, model_reason = parsed
+    if not author.allowed_claims:
+        claim_ids = []
     checked = check_draft(comment, claim_ids, author, rules)
     if checked.ok:
         proposal = Proposal(
